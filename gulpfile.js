@@ -23,6 +23,7 @@ gulp.task('test', function () {
         browsers: ['Chrome'], 
         files: testFiles,
         frameworks: ['mocha', 'browserify'],
+        reporters: ['spec'],
         preprocessors: { 'test/**/*.js': ['browserify'] },
         singleRun: true 
     }, function (exitCode) { 
@@ -41,6 +42,7 @@ gulp.task('default', function() {
         },
         frameworks: ['mocha', 'browserify'],
         preprocessors: { 'test/**/*.js': ['browserify'] },
+        reporters: ['spec'],
         singleRun: false,
         autoWatch: true 
     }, function (exitCode) { 
