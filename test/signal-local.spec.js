@@ -23,8 +23,8 @@ describe('signal-local', function () {
     	var c2 = sl('c2');
 
     	c2.on('message', function(message) {
-    		message.should.eql('Hello!');
-    		done();
+            message.should.eql('Hello!');
+            done();
     	});
 
     	c1.on('ready', function () {

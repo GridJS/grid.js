@@ -21,20 +21,44 @@ describe('p2p', function () {
         p2p.signalingChannel.on('error', done);
     });
 
-    it('should be able to send messages', function (done) {
+    it('should be able to send messages from destanation', function (done) {
         var p1 = require('../lib/p2p.js')(opts);
         var p2 = require('../lib/p2p.js')(opts);
 
-        p2.on('message', function (msg) {
-            msg.should.eql('Hello!');
-            done();
+        p2.on('connection', function (conn) {
+            conn.on('open', function () {
+                conn.send('Hello!');
+            });
         });
 
         utils.when([p1, p2], 'ready', function (id1, id2) {
             var conn = p1.connect(p2.id);
-            conn.on('ready', function () {
+            conn.on('open', function () {
+                conn.on('message', function (msg) {
+                    msg.data.should.be.eql('Hello!');
+                    done();
+                });
+            });
+        });
+    });
+
+    it('should be able to send messages to destanation', function (done) {
+        var p1 = require('../lib/p2p.js')(opts);
+        var p2 = require('../lib/p2p.js')(opts);
+
+        p2.on('connection', function (conn) {
+            conn.on('message', function (msg) {
+                msg.data.should.be.eql('Hello!');
+                done();
+            });
+        });
+
+        utils.when([p1, p2], 'ready', function (id1, id2) {
+            var conn = p1.connect(p2.id);
+            conn.on('open', function () {
                 conn.send('Hello!');
             });
         });
     });
+
 });
