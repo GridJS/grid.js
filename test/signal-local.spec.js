@@ -18,8 +18,9 @@ describe('signal-local', function () {
     });
 
     it('should be able to transfer messages', function (done) {
-    	var c1 = require('../lib/signal-local.js')('c1');
-    	var c2 = require('../lib/signal-local.js')('c2');
+        var sl = require('../lib/signal-local.js');
+    	var c1 = sl('c1');
+    	var c2 = sl('c2');
 
     	c2.on('message', function(message) {
     		message.should.eql('Hello!');

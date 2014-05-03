@@ -1,3 +1,5 @@
+'use strict';
+
 var Utils = {},
 	async = require('async');
 
@@ -7,7 +9,7 @@ Utils.when = function (emitters, event, cb) {
 			emitter.on(event, function () {
 				var args = [null].concat(Array.prototype.slice.call(arguments));
 				cb.apply(null, args);
-			})
+			});
 		};
 	});
 
