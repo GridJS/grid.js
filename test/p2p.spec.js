@@ -31,7 +31,7 @@ describe('p2p', function () {
             });
         });
 
-        utils.when([p1, p2], 'ready', function (id1, id2) {
+        utils.when([p1, p2], 'ready', function () {
             var conn = p1.connect(p2.id);
             conn.on('open', function () {
                 conn.on('message', function (msg) {
@@ -53,7 +53,7 @@ describe('p2p', function () {
             });
         });
 
-        utils.when([p1, p2], 'ready', function (id1, id2) {
+        utils.when([p1, p2], 'ready', function () {
             var conn = p1.connect(p2.id);
             conn.on('open', function () {
                 conn.send('Hello!');
