@@ -21,6 +21,10 @@ describe('p2p', function () {
         p2p.signalingChannel.on('error', done);
     });
 
+    it('should return incoming connection, when connecting to id, that connected to us', function (done) {
+        done('Failed for now');
+    });
+
     it('should be able to send messages from destanation', function (done) {
         var p1 = require('../lib/p2p.js')(opts);
         var p2 = require('../lib/p2p.js')(opts);
