@@ -1,8 +1,8 @@
 {
-  "name": "grid-js",
-  "version": "0.0.0",
+  "name": "grid.js",
+  "version": "0.0.1",
   "description": "Client for grid server",
-  "main": "index.js",
+  "main": "dist/grid.js",
   "directories": {
     "test": "test"
   },
