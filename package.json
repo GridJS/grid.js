@@ -2,7 +2,7 @@
   "name": "grid.js",
   "version": "0.0.1",
   "description": "Client for grid server",
-  "main": "dist/grid.js",
+  "main": "lib/grid.js",
   "directories": {
     "test": "test"
   },
