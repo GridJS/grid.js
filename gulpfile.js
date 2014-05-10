@@ -71,7 +71,7 @@ gulp.task('publish', function (cb){
     runSequence('commit', 'tag', 'push', cb);
 });
 
-gulp.task('deploy', function (cb) {
+gulp.task('release', function (cb) {
     runSequence('build', 'uglify', 'bump', 'npm', 'publish', cb);
 });
 
