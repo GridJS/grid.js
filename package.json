@@ -1,5 +1,5 @@
 {
-  "name": "grid.js",
+  "name": "grid-js",
   "version": "0.0.0",
   "description": "Client for grid server",
   "main": "index.js",
