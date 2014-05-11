@@ -2,7 +2,8 @@
 
 'use strict';
 
-var should = require('should');
+var should = require('should'),
+    utils = require('./utils');
 
 describe('signal-ws', function () {
 
@@ -33,5 +34,24 @@ describe('signal-ws', function () {
             c1.close();
             done();
     	});
+    });
+
+    it('should receive custom message from other clients', function (done) {
+        var sl = require('../lib/signal-ws.js');
+        var c3 = sl(opts).open();
+        var c4 = sl(opts).open();
+
+        utils.when([c3, c4], 'message', function (w3, w4) {
+            w3 = w3[0];
+            w4 = w4[0];
+            c3.on('message', function (helloMsg) {
+                helloMsg.src.should.eql(w4.id);
+                helloMsg.data.should.eql('Hello!');
+                c3.close();
+                c4.close();
+                done();
+            });
+            c4.send(w3.id, 'Hello!');
+        });
     });
 });

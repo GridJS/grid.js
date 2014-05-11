@@ -5,10 +5,10 @@ var Utils = {},
 
 Utils.when = function (emitters, event, cb) {
 	var tasks = emitters.map(function (emitter) {
-		return function (cb) {
-			emitter.on(event, function () {
+		return function (mapCb) {
+			emitter.once(event, function () {
 				var args = [null].concat(Array.prototype.slice.call(arguments));
-				cb.apply(null, args);
+				mapCb.apply(null, args);
 			});
 		};
 	});
