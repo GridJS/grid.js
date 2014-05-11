@@ -71,4 +71,28 @@ describe('p2p', function () {
         });
     });
 
+    var ws = require('../lib/signal-ws.js');
+
+    it('should establish connection with signal-ws', function (done) {
+        var p5 = require('../lib/p2p.js')({ signalingChannel: ws({ host: 'localhost', port: 31337 }) });
+        var p6 = require('../lib/p2p.js')({ signalingChannel: ws({ host: 'localhost', port: 31337 }) });
+
+        utils.when([p5.signalingChannel, p6.signalingChannel], 'message', function (w5, w6) {
+            var id5 = w5[0].id, id6 = w6[0].id;
+            p5.on('connection', function(conn, id) {
+                id.should.eql(id6);
+                conn.on('message', function (msg) {
+                    msg.data.should.eql('Hello!');
+                    p5.close();
+                    p6.close();
+                    done();
+                });
+            });
+            var conn = p6.connect(id5);
+            conn.on('open', function () {
+                conn.send('Hello!');
+            });
+        });
+    });
+
 });

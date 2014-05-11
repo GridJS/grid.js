@@ -28,7 +28,7 @@ describe('signal-local', function () {
 
     	c2.on('message', function (message, from) {
             from.should.eql('c1');
-            message.should.eql('Hello!');
+            message.data.should.eql('Hello!');
             c1.close();
             c2.close();
             done();
