@@ -1,6 +1,6 @@
 {
   "name": "grid.js",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Client for grid server",
   "main": "lib/grid.js",
   "directories": {
