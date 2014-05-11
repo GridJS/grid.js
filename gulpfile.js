@@ -94,7 +94,15 @@ gulp.task('test', function () {
     });
 });
 
-gulp.task('default', function() {
+var Grid = require('grid'),
+    grid;
+
+gulp.task('gridServer', function (cb) {
+    util.log('Creating grid server on localhost:31337');
+    grid = new Grid({ host: 'localhost', port: 31337 }, cb);
+});
+
+gulp.task('default', ['gridServer'], function() {
     karma.start({
         browsers: ['Chrome'],
         files: testFiles,
@@ -109,6 +117,9 @@ gulp.task('default', function() {
         autoWatch: true
     }, function (exitCode) {
         util.log('Karma has exited with ' + exitCode);
-        process.exit(exitCode);
+        util.log('Closing grid server');
+        grid._server.close(function () {
+            process.exit(exitCode);
+        });
     });
 });

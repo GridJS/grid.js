@@ -11,54 +11,60 @@ describe('signal-local', function () {
     	SignalLocal.should.be.instanceof(Function);
     });
 
-    it('should emit ready when initialized', function (done) {
+    it('should emit open when channel is requested', function (done) {
         var sl = require('../lib/signal-local.js')();
-        sl.on('ready', done.bind(null, null));
+        sl.open();
+        sl.once('open', function () {
+            sl.open();
+            sl.once('open', done.bind(null, null));
+        });
         sl.on('error', done);
     });
 
     it('should be able to transfer messages', function (done) {
         var sl = require('../lib/signal-local.js');
-    	var c1 = sl('c1');
-    	var c2 = sl('c2');
+    	var c1 = sl('c1').open();
+    	var c2 = sl('c2').open();
 
-    	c2.on('message', function(message) {
+    	c2.on('message', function (message, from) {
+            from.should.eql('c1');
             message.should.eql('Hello!');
             c1.close();
             c2.close();
             done();
     	});
 
-    	c1.on('ready', function () {
-    		var connection = c1.connect('c2');
-    		connection.send('Hello!');
+    	c1.on('open', function () {
+    		c1.send('c2', 'Hello!');
     	});
     });
 
     it('should broadcast `connected` message', function (done) {
         var sl = require('../lib/signal-local.js');
-        var c1 = sl('c1');
+        var c3 = sl('c3').open();
 
-        c1.on('connected', function(id) {
-            id.should.eql('c2');
-            c1.close();
+        var c4 = sl('c4');
+        c3.on('connected', function(id) {
+            id.should.eql('c4');
+            c3.close();
+            c4.close();
             done();
         });
+        c4.open();
 
-        sl('c2');
     });
 
     it('should broadcast `disconnected` message', function (done) {
         var sl = require('../lib/signal-local.js');
-        var c1 = sl('c1');
+        var c5 = sl('c5').open();
+        var c6 = sl('c6').open();
 
-        c1.on('disconnected', function(id) {
-            id.should.eql('c2');
-            c1.close();
+        c5.once('disconnected', function(id) {
+            id.should.eql('c6');
+            c5.close();
             done();
         });
 
-        var c2 = sl('c2');
-        c2.close();
+        c6.close();
     });
 });
