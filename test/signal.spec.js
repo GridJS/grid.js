@@ -4,11 +4,11 @@
 
 var should = require('should');
 
-describe('signal-local', function () {
+function test(signal) {
     it('should be a constructor', function () {
-    	var SignalLocal = require('../lib/signal-local.js');
-    	should.exist(SignalLocal);
-    	SignalLocal.should.be.instanceof(Function);
+        var SignalLocal = require('../lib/signal-local.js');
+        should.exist(SignalLocal);
+        SignalLocal.should.be.instanceof(Function);
     });
 
     it('should emit open when channel is requested', function (done) {
@@ -20,10 +20,10 @@ describe('signal-local', function () {
 
     it('should be able to transfer messages', function (done) {
         var sl = require('../lib/signal-local.js')();
-    	var c1 = sl('c1').open();
-    	var c2 = sl('c2').open();
+        var c1 = sl('c1').open();
+        var c2 = sl('c2').open();
 
-    	c2.on('message', function (message, from) {
+        c2.on('message', function (message, from) {
             if (message.type) { return; }
 
             from.should.eql('c1');
@@ -31,11 +31,11 @@ describe('signal-local', function () {
             c1.close();
             c2.close();
             done();
-    	});
+        });
 
-    	c1.on('open', function () {
-    		c1.send('c2', 'Hello!');
-    	});
+        c1.on('open', function () {
+            c1.send('c2', 'Hello!');
+        });
     });
 
     it('should broadcast `connected` message', function (done) {
@@ -69,5 +69,16 @@ describe('signal-local', function () {
         });
 
         c6.close();
+    });
+}
+
+describe.only('signal', function () {
+
+    describe('local', function () {
+        test(require('../lib/signal-local.js'));
+    });
+
+    describe('websocket', function () {
+        test(require('../lib/signal-ws.js'));
     });
 });
