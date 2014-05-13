@@ -79,21 +79,6 @@ var karma = require('karma').server;
 var testFiles = [
     'test/**/*.spec.js'
 ];
-
-gulp.task('test', function () {
-    karma.start({
-        browsers: ['Chrome'],
-        files: testFiles,
-        frameworks: ['mocha', 'browserify'],
-        reporters: ['spec'],
-        preprocessors: { 'test/**/*.js': ['browserify'] },
-        singleRun: true
-    }, function (exitCode) {
-        util.log('Karma has exited with ' + exitCode);
-        process.exit(exitCode);
-    });
-});
-
 var Grid = require('grid'),
     grid;
 
@@ -102,24 +87,35 @@ gulp.task('gridServer', function (cb) {
     grid = new Grid({ host: 'localhost', port: 31337 }, cb);
 });
 
+function closeGrid(exitCode) {
+    util.log('Karma has exited with ' + exitCode);
+    util.log('Closing grid server');
+    grid._server.close(function () {
+        process.exit(exitCode);
+    });
+}
+
+gulp.task('test', ['gridServer'], function () {
+    karma.start({
+        browsers: ['Chrome'],
+        files: testFiles,
+        browserify: { debug: true },
+        frameworks: ['browserify', 'mocha'],
+        reporters: ['mocha'],
+        preprocessors: { 'test/**/*.js': ['browserify'] },
+        singleRun: true
+    }, closeGrid);
+});
+
 gulp.task('default', ['gridServer'], function() {
     karma.start({
         browsers: ['Chrome'],
         files: testFiles,
-        browserify: {
-            watch: true,
-            debug: true
-        },
-        frameworks: ['mocha', 'browserify'],
-        preprocessors: { 'test/**/*.js': ['browserify'] },
-        reporters: ['spec'],
+        browserify: { debug: true },
+        frameworks: ['browserify', 'mocha'],
+        preprocessors: { 'test/**/*.js': 'browserify' },
+        reporters: ['mocha'],
         singleRun: false,
         autoWatch: true
-    }, function (exitCode) {
-        util.log('Karma has exited with ' + exitCode);
-        util.log('Closing grid server');
-        grid._server.close(function () {
-            process.exit(exitCode);
-        });
-    });
+    }, closeGrid);
 });
