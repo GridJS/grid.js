@@ -14,7 +14,7 @@ Utils.when = function (emitters, event, cb) {
 	});
 
 	async.parallel(tasks, function (err, results) {
-		cb.apply(null, results.map(function (r) { return r[0]; }));
+		cb.apply(null, results);
 	});
 };
 

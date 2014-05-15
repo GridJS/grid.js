@@ -33,13 +33,38 @@ describe('grid', function () {
             return new Grid({ host: 'localhost', port: 31337 });
         });
 
-        var stb = sinon.stub();
-        stb.returns(function () { });
         utils.when(grids, 'ready', function () {
             _.forEach(grids, function (grid) { grid.close(); });
             done();
         });
+    });
 
-        grids[3].on('connection', function () { stb()(); });
+    it('should maintain connectivity, when some clients are disconnected', function (done) {
+        var Grid = require('../lib/grid.js');
+
+        var grids = _.range(5).map(function () {
+            return new Grid({ host: 'localhost', port: 31337 });
+        });
+
+        utils.when(grids, 'ready', function (id1, id2, id3, id4, id5) {
+            grids[3].on('connection', function (conn, id) {
+                if (id !== id1) { return; }
+
+                // Kill 2 - 4 nodes, so 1 node will be disconnected from 5
+
+                grids[1].close();
+                grids[2].close();
+                grids[3].close();
+
+                // After connections recovery id5 should get connection from 1 node
+
+                grids[4].on('connection', function (conn, id) {
+                    if (id === id1) {
+                        _.forEach(grids, function (grid) { grid.close(); });
+                        done();
+                    }
+                });
+            });
+        });
     });
 });

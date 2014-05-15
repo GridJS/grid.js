@@ -34,8 +34,8 @@ function test(Signal) {
         var c2 = new Signal();
 
         utils.when([c1, c2], 'message:welcome', function (mw1, mw2) {
-            c2.on('message:untyped', function (message, from) {
-                from.should.eql(mw1.id);
+            c2.on('message:untyped', function (message) {
+                message.src.should.eql(mw1.id);
                 message.data.should.eql('Hello!');
                 c1.close();
                 c2.close();

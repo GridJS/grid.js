@@ -35,7 +35,6 @@ describe('p2p', function () {
             var conn = p1.connect(arg2.id);
             conn.on('open', function () {
                 conn.on('message', function (msg) {
-                    msg.data.should.be.eql('Hello!');
                     p1.close();
                     p2.close();
                     done();
@@ -64,4 +63,6 @@ describe('p2p', function () {
             });
         });
     });
+
+    it('should work, when malformed messages are passed');
 });
