@@ -33,12 +33,10 @@ describe('p2p', function () {
 
         utils.when([p1.signalingChannel, p2.signalingChannel], 'message:welcome', function (arg1, arg2) {
             var conn = p1.connect(arg2.id);
-            conn.on('open', function () {
-                conn.on('message', function (msg) {
-                    p1.close();
-                    p2.close();
-                    done();
-                });
+            conn.on('message', function (msg) {
+                p1.close();
+                p2.close();
+                done();
             });
         });
     });
