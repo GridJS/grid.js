@@ -26,6 +26,25 @@ describe('grid', function () {
         });
     });
 
+    it('should emit open in both ends', function (done) {
+        var Grid = require('../lib/grid.js');
+
+        var grids = _.range(2).map(function () {
+            return new Grid({ host: 'localhost', port: 31337 });
+        });
+
+        var c = 0;
+
+        utils.when(grids, 'ready', function (id1, id2) {
+            grids[0].on('connection', function (conn) {
+                conn.on('open', function () { c ++; if (c === 2) { done(); } });
+            });
+            grids[1].on('connection', function (conn) {
+                conn.on('open', function () { c ++; if (c === 2) { done(); } });
+            });
+        });
+    });
+
     it('should provide duplex communication', function (done) {
         var Grid = require('../lib/grid.js');
 

@@ -21,6 +21,38 @@ describe('p2p', function () {
         p2p.signalingChannel.on('error', done);
     });
 
+    it('should emit open on incoming connection', function (done) {
+        var p1 = require('../lib/p2p.js')(opts);
+        var p2 = require('../lib/p2p.js')(opts);
+
+        p2.on('connection', function (conn) {
+            conn.on('open', function () {
+                p1.close();
+                p2.close();
+                done();
+            });
+        });
+
+        utils.when([p1.signalingChannel, p2.signalingChannel], 'message:welcome', function (arg1, arg2) {
+            var conn = p1.connect(arg2.id);
+        });
+    });
+
+    it('should emit open on outcoming connection', function (done) {
+        var p1 = require('../lib/p2p.js')(opts);
+        var p2 = require('../lib/p2p.js')(opts);
+
+        utils.when([p1.signalingChannel, p2.signalingChannel], 'message:welcome', function (arg1, arg2) {
+            var conn = p1.connect(arg2.id);
+            conn.on('open', function () {
+                p1.close();
+                p2.close();
+                done();
+            });
+        });
+    });
+
+
     it('should be able to send messages from destanation', function (done) {
         var p1 = require('../lib/p2p.js')(opts);
         var p2 = require('../lib/p2p.js')(opts);
